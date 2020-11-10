@@ -1,0 +1,40 @@
+INCLUDE MACROS.LIB
+.286
+.MODEL SMALL
+.STACK 64
+.DATA
+    LET DB 'INGRESA UNA CADENA','$'
+    ARRE DB 20 DUP (?),'$'
+    TAM = $-ARRE
+    LN DB 0AH,0DH,'$'
+.CODE
+MAIN PROC FAR
+    MOV AX, @DATA  
+    MOV DS,AX
+    MOV ES,AX
+    
+    WRITE LET
+    WRITE LN
+    
+    MOV CX,TAM
+    MOV SI,0
+    CICLO:
+    MOV AH, 01H
+    INT 21H
+    MOV ARRE[SI],AL
+    INC SI
+    LOOP CICLO
+    
+    WRITE LN
+    WRITE ARRE
+    
+    ;REP => CADENAS SI Y DI
+    ;LOOPNE
+    ;LOOPE
+    ;LOOPNZ
+    ;LOOPZ
+    FIN:
+    .EXIT
+        
+MAIN ENDP
+END MAIN

@@ -1,0 +1,27 @@
+INCLUDE MACROS.LIB
+.286
+.MODEL SMALL
+.STACK 64
+.DATA
+    a DB 50 DUP (?),'$'
+    b DB 50 DUP (?),'$'
+.CODE
+MAIN PROC FAR
+    ;EN ESTA CLASE VIMOS CMP DE CADENA
+    ;CMPSB, COMPSW
+    MOV AX, @DATA  
+    MOV DS,AX
+    MOV ES,AX
+    
+    read a
+    read b
+    
+        FIN:
+    .EXIT
+MAIN ENDP
+
+READ PROC
+    MOV AH,01H
+    INT 21H
+    RET
+READ ENDP

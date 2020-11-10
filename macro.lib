@@ -1,0 +1,151 @@
+cleanarre MACRO arreg
+    mov si,0
+    mov al,vacio
+limpia:
+    mov arreg[si],al
+    inc si
+    cmp si,20
+    jb limpia
+endm
+
+mouse MACRO x
+    mov ax,X
+    int 33h
+endm
+
+cursorPos MACRO FILA, COLUMNA
+    mov ah, 02
+    mov bh, 00h
+    mov dh, FILA
+    mov dl, COLUMNA
+    int 10h
+ENDM
+
+
+btn MACRO ; ID del bot?n (0=iz,1=der, 2=cntr) 
+    mov ax,5;Obtiene informaci?n acerca de si se oprimi? un bot?n
+    mov bx, 1h
+    int 33h
+endm
+
+convCord MACRO coord
+    mov ax, coord
+    mov bl,8
+    div bl
+ENDM
+
+write MACRO let ; imprime en pantalla el letrero
+    MOV AH, 09H
+    LEA DX, let
+    INT 21H
+ENDM
+
+gotoxy MACRO x,y    ;posicionar en pantalla
+    MOV AH, 02H
+    MOV BH, 00H
+    MOV DH, y
+    MOV DL, x
+    INT 10H
+ENDM
+
+clrscrn MACRO COLOR ;limpiar pantalla y pasarla a color
+    MOV AX, 0600H
+    MOV BH, COLOR
+    MOV CX, 0000
+    MOV DX, 184FH
+    INT 10H
+ENDM
+
+sumita macro
+    gotoxy 23,7
+    write l1
+    call read
+    write ln
+    mov a,al
+    gotoxy 23,8
+    write l2
+    call read
+    write ln
+    add a,al
+    sub a,30h
+    gotoxy 23,9
+    write resul
+    write a
+    write ln
+endm
+
+restita macro
+    gotoxy 23,7
+    write l1
+    call read
+    write ln
+    mov a,al
+    gotoxy 23,8
+    write l2
+    call read
+    write ln
+    cmp a,al
+    jl vali
+    sub a,al
+    add a,30h
+    gotoxy 23,9
+    write resul
+    write a
+    jmp outt
+vali:
+    gotoxy 17,10
+    write validar
+outt:
+    write ln
+endm
+
+nombree macro arre
+    mov si,0
+    gotoxy 23,7
+    write l3
+leer:
+    call read
+    cmp al,salto
+    je salirr
+    mov arre[si],al
+    inc si
+    jmp leer
+salirr:
+    gotoxy 23,8
+    write namee
+    write arre 
+    write ln
+endm
+
+LEE_CAD MACRO BUFFER ;SI SIRVE :b
+    MOV AH,3FH
+    MOV BX,0
+    MOV CX,50;MAXIMO DE CARACTERES DE LA CADENA
+    LEA DX,BUFFER
+    INT 21H
+ENDM
+
+READ_C MACRO CHAR
+    MOV AH,01H
+    INT 21H
+    MOV CHAR,AL
+ENDM
+
+posicion macro dato
+	mov ax,dato
+	mov bl,8
+	div bl
+	endm
+
+ventana macro fi,ci,ff,cf,colo
+	pusha
+	mov ah,6h ; desplaza la ventana hacia arriba
+	mov al,0 ; toda la ventana
+	mov ch,fi ; fila superior izquierda
+	mov cl,ci ; columna superior izquierda
+	mov dh,ff ; fila inferior derecha
+	mov dl,cf ; columna inferior derecha
+	mov bh,colo ; atributo para el área en blanco
+	int 10h ;llamada al bios
+	popa
+endm

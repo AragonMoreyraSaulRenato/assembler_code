@@ -1,0 +1,97 @@
+WRITE MACRO LETRERO
+    MOV AH, 09H
+    LEA DX, LETRERO
+    INT 21H
+ENDM
+
+GOTOXY MACRO Y,X
+    MOV AH, 02H
+    MOV BH, 00H
+    MOV DH, X
+    MOV DL, Y
+    INT 10H
+ENDM
+
+CLEAR MACRO
+    MOV AX, 0600H
+    MOV BH, 0FH
+    MOV CX, 0000
+    MOV DX, 184FH
+    INT 10H
+ENDM
+
+MOUSE MACRO
+    MOV AX,01H
+    INT 33H 
+    MOV AX,03H
+    INT 33H
+ENDM
+
+READ_S MACRO CADENA
+    MOV AH, 3FH
+    MOV BX,0
+    MOV CX,50
+    LEA DX,CADENA
+    INT 21H
+ENDM
+
+READ_C MACRO CHAR
+    MOV AH,01H
+    INT 21H
+    MOV CHAR,AL
+ENDM
+
+CLEARCOLOR MACRO inicio,fin
+     MOV AX,0600H
+     MOV BH,30H
+     MOV CX,inicio
+     MOV DX,fin
+     INT 10H
+ENDM
+
+CLEARCOLOR MACRO COL
+     MOV AX,0601H
+     MOV BH,57H
+     MOV CX,COL
+     MOV DX,COL
+     INT 10H
+ENDM
+
+RESALTAXY MACRO COL,FIL
+    MOV AH,06H
+    MOV AL,01H
+    MOV BH,57H
+    MOV BL,FIL
+    MOV CL,COL
+    MOV DH,FIL
+    MOV DL,COL
+    INT 10H
+ENDM
+
+DWTODB MACRO ORI, DES
+    MOV BX,ORI
+    MOV DES,BL
+ENDM
+
+DIVNUM MACRO numero,divisor,destino
+     MOV AX,numero
+     MOV BL,divisor
+     DIV BL
+     MOV destino, AL
+ENDM
+
+READ_CADE MACRO VALOR,TAM
+    LOCAL NC1, NA
+    MOV SI,0
+    NC1:  
+    MOV AH,01H
+    INT 21H
+    CMP AL,0DH
+    JE NA
+    MOV VALOR[SI], AL
+    ADD SI,1
+    CMP SI,TAM
+    JNE NC1
+    NA:
+    MOV TAM,SI
+ENDM

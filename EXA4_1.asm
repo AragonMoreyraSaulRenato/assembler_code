@@ -1,0 +1,166 @@
+INCLUDE MACROS.LIB
+READS MACRO cadena,longitud
+    MOV AH,3FH
+    MOV BX,00
+    MOV CX,longitud
+    LEA DX,cadena
+    INT 21H
+ENDM
+
+.286
+.MODEL SMALL ;DECLARACION DEL MODELO DE MEMORIA
+.STACK 64
+.DATA
+    LET1 DB '1.-RESTAR$'
+    LET2 DB '2.-COMPARAR CADENAS$'
+    LET3 DB '3.-SALIR$'
+    
+    LN1 DB 'INGRESA NUMERO 1: $'
+    LN2 DB 'INGRESA NUMERO 2: $'
+    LN3 DB 'RESTA ES: $'
+    LN4 DB 'PRIMER NUMERO ES MAYOR INTENTA OTRO $'
+    
+    CC1 DB 'INGRESA CADENA1: $'
+    CC2 DB 'INGRESA CADENA2: $'
+    CEE DB 'CADENAS IGUALES $'
+    CNE DB 'CADENAS NO SON IGUALES $'
+    
+    LN DB 0AH,0DH,'$'
+    
+    TC1 DB (0),'$'
+    TC2 DB (0),'$'
+    NUM1 DB (0),'$'
+    NUM2 DB (0),'$'
+    
+    CAD1 DB 10 DUP(?),'$' 
+    CAD2 DB 10 DUP(?),'$'
+    CORDX DB 0, '$'
+    CORDY DB 0, '$'
+    .CODE
+MAIN PROC FAR
+    MOV AX, @DATA  
+    MOV DS,AX
+    MOV ES,AX
+    CLEAR
+    INICIO:
+    CLEAR
+    GOTOXY 30,0
+    WRITE LET1
+    GOTOXY 30,1
+    WRITE LET2
+    GOTOXY 30,2
+    WRITE LET3
+    
+    MOU:
+    MOUSE
+    CMP BX,1
+    JE FILA
+    JMP MOU
+    FILA:
+    DIVNUM DX,8,CORDY
+    DIVNUM CX,8,CORDX
+    
+    RESTA:
+    CMP CORDY,0
+    JNE COMPA
+    CMP CORDX,38
+    JA MOU
+    CMP CORDX,30
+    JB MOU
+    GOTOXY 30,8
+    CALL RESTAR
+    JMP INICIO
+    
+    MOO:
+    JMP MOU
+    
+    COMPA:
+    CMP CORDY,1
+    JNE SALIR
+    CMP CORDX,48
+    JA MOU
+    CMP CORDX,30
+    JB MOU
+    GOTOXY 30,8
+    CALL CMPCADS
+    JMP INICIO
+    
+    SALIR:
+    CMP CORDY,2
+    JNE MOU
+    CMP CORDX,37
+    JA MOU
+    CMP CORDX,30
+    JB MOO
+    GOTOXY 30,8
+    CLEAR
+    GOTOXY 0,0
+    CLEAR
+    JMP FIN
+    
+FIN:
+RET
+        
+MAIN ENDP
+RESTAR PROC
+    PRIN:
+    CLEAR
+    GOTOXY 30,0
+    WRITE LN1
+    READ_C NUM1
+    GOTOXY 30,1
+    WRITE LN2
+    READ_C NUM2
+    MOV AL,NUM1
+    CMP AL,NUM2
+    JA NEXT
+    MOV CL,NUM2
+    MOV NUM2,AL
+    MOV NUM1,CL
+    NEXT:
+    MOV AL,NUM1
+    SUB AL,NUM2
+    MOV NUM1,AL
+    GOTOXY 30,2
+    WRITE LN3
+    ADD NUM1,30H
+    WRITE NUM1
+    READ_C NUM1
+    RET
+ENDP
+
+CMPCADS PROC
+    PUSHA
+    CLEAR
+    GOTOXY 30,0
+    WRITE CC1  
+    READS CAD1,10
+    GOTOXY 30,1
+    WRITE CC2
+    READS CAD2,10
+    
+    LEA SI,CAD1
+    LEA DI,CAD2
+    
+    REPE CMPSB
+    JE IGUA
+    JNE DIFE
+    
+    IGUA:
+    GOTOXY 30,3
+    WRITE CEE
+    JMP F
+    
+    DIFE:
+    GOTOXY 30,3
+    WRITE CNE
+    F:
+    READ_C NUM1
+    POPA
+    MOV CAD1,0
+    MOV CAD2,0
+    RET
+    
+ENDP
+
+END MAIN
